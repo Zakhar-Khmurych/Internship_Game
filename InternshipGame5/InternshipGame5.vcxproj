@@ -140,12 +140,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommandInvoker.cpp" />
+    <ClCompile Include="ConsoleGameStateDrawer.cpp" />
+    <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assets\Assets.vcxproj">
       <Project>{af9a81a5-3b7d-4890-af18-b0a48ede2a8d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandInvoker.h" />
+    <ClInclude Include="ConsoleGameStateDrawer.h" />
+    <ClInclude Include="GameHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
