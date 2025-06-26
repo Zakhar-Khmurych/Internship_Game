@@ -84,29 +84,38 @@ public:
         RemoveUnit(unit2);
     }
 
+    
     void EngageTheCombat(std::shared_ptr<Unit> unit1, std::shared_ptr<Unit> unit2) {
         DiceRoller diceRoller;
-        int maxAdvantage = std::min(unit1->GetCurrentAdvantage(), unit2->GetCurrentAdvantage());
 
-        int roll1 = diceRoller.RollMultiple(maxAdvantage, 6);
-        int roll2 = diceRoller.RollMultiple(maxAdvantage, 6);
+        // Максимальна кількість кубиків для кожного юніта на основі їх поточної переваги
+        int maxAdvantage1 = std::min(unit1->GetCurrentAdvantage(), unit1->GetOwner()->supplies); // Можна врахувати ресурси
+        int maxAdvantage2 = std::min(unit2->GetCurrentAdvantage(), unit2->GetOwner()->supplies);
 
-        std::cout << unit1->GetOwner()->Name << " 1 rolls: " << roll1 << " " << unit2->GetOwner()->Name << ",  2 rolls: " << roll2 << std::endl;
+        // Кидаємо кубики для кожного юніта
+        int roll1 = diceRoller.RollMultiple(maxAdvantage1, 6);  // Кількість кубиків та їх максимальний розмір
+        int roll2 = diceRoller.RollMultiple(maxAdvantage2, 6);
 
+        // Вивести результати кидків
+        std::cout << unit1->GetOwner()->Name << " rolls: " << roll1 << " | "
+            << unit2->GetOwner()->Name << " rolls: " << roll2 << std::endl;
+
+        // Порівнюємо результати
         if (roll1 > roll2) {
-            std::cout << unit1->GetOwner()->Name << " won, " << unit2->GetOwner()->Name << " lost, removing from the battlefield." << std::endl;
-            RemoveUnit(unit2);
+            std::cout << unit1->GetOwner()->Name << " wins! " << unit2->GetOwner()->Name << " loses and is removed." << std::endl;
+            RemoveUnit(unit2);  // Видаляємо програвшого
         }
         else if (roll1 < roll2) {
-            std::cout << unit2->GetOwner()->Name << " won, " << unit1->GetOwner()->Name << " lost, removing from the battlefield." << std::endl;
-            RemoveUnit(unit1);
+            std::cout << unit2->GetOwner()->Name << " wins! " << unit1->GetOwner()->Name << " loses and is removed." << std::endl;
+            RemoveUnit(unit1);  // Видаляємо програвшого
         }
         else {
-            std::cout << "It's a Pyrrhic victory! Both lost." << std::endl;
-            RemoveUnit(unit1);
+            std::cout << "It's a tie! Both units are removed." << std::endl;
+            RemoveUnit(unit1);  // Видаляємо обох
             RemoveUnit(unit2);
         }
     }
+    
 
 
 };
