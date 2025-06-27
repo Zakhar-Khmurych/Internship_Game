@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -124,6 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -153,6 +155,9 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TextManager.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="WindowRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphicEngine.cpp" />
@@ -162,13 +167,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="WindowRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assets\Assets.vcxproj">
       <Project>{af9a81a5-3b7d-4890-af18-b0a48ede2a8d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\InternshipGame5\InternshipGame5.vcxproj">
-      <Project>{c7cfd815-3c12-4afd-8b48-cbdddb56b24d}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

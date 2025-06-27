@@ -16,6 +16,11 @@ public:
 
     Grid gameGrid;
 
+    Grid* GetGrid() {
+        return &gameGrid;
+    }
+
+
     void Initiate() {
         GridGenerator generator;
         generator.GenerateTerrain(gameGrid);

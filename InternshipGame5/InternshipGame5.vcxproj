@@ -89,6 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,6 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +150,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Assets\Assets.vcxproj">
       <Project>{af9a81a5-3b7d-4890-af18-b0a48ede2a8d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraphicEngine\GraphicEngine.vcxproj">
+      <Project>{a6c7b565-7360-4e45-8d10-85e70b52387b}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
