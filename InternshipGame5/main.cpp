@@ -5,6 +5,7 @@
 #include "CommandInvoker.h"
 #include "../GraphicEngine/WindowRenderer.h"
 
+
 int main() {
     std::cout << "Starting Game...\n";
 
@@ -12,21 +13,21 @@ int main() {
     CommandInvoker invoker;
 
     std::atomic<bool> isRunning(true);
+    WindowRenderer renderer(1200, 800);
+    InputQueue inputQueue;
 
-    // Потік гри
     std::thread gameThread([&]() {
         gameHandler.Initiate();
-        gameHandler.Run(invoker);
+        gameHandler.Run(invoker, inputQueue);
         isRunning = false;
         });
 
-    // Потік графіки
-    WindowRenderer renderer(1200, 800);
     std::thread renderThread([&]() {
-        renderer.RenderGame(isRunning, [&]() -> Grid* {
-            return gameHandler.GetGrid();  // Поточна сітка з гри
-            });
+        renderer.RenderGame(isRunning,
+            [&]() -> Grid* { return gameHandler.GetGrid(); },
+            inputQueue);
         });
+
 
     gameThread.join();
     renderThread.join();
