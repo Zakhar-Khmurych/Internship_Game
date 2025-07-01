@@ -145,6 +145,7 @@
     <ClCompile Include="CommandInvoker.cpp" />
     <ClCompile Include="ConsoleGameStateDrawer.cpp" />
     <ClCompile Include="GameHandler.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="CommandInvoker.h" />
     <ClInclude Include="ConsoleGameStateDrawer.h" />
     <ClInclude Include="GameHandler.h" />
+    <ClInclude Include="InputHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,7 @@
 #include "TextManager.h"
 #include "../Assets/Grid.h"
 #include <functional>
+#include "InputKey.h"
 
 
 class WindowRenderer {
@@ -49,6 +50,50 @@ public:
             window.display();
         }
     }
+
+    void RenderGame(std::atomic<bool>& isRunning, std::function<Grid* ()> getGrid, InputQueue& inputQueue) {
+        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Internship game");
+        sf::Clock clock;
+
+        textureManager.initializeInvalidTexture();
+        textureManager.initializeAll();
+
+        textManager.AddText("Hello, SFML!", 24, sf::Color::White, sf::Vector2f(900, 100));
+        textManager.AddText("Looking for actions...", 24, sf::Color::White, sf::Vector2f(900, 150));
+
+        while (window.isOpen() && isRunning) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    isRunning = false;
+                    window.close();
+                }
+
+                if (event.type == sf::Event::KeyPressed) {
+                    switch (event.key.code) {
+                    case sf::Keyboard::W: inputQueue.Push(InputKey::Up); break;
+                    case sf::Keyboard::S: inputQueue.Push(InputKey::Down); break;
+                    case sf::Keyboard::A: inputQueue.Push(InputKey::Left); break;
+                    case sf::Keyboard::D: inputQueue.Push(InputKey::Right); break;
+                    case sf::Keyboard::Q: inputQueue.Push(InputKey::EndTurn); break;
+                    default: break;
+                    }
+                }
+            }
+
+            sf::Time elapsed = clock.restart();
+            window.clear();
+
+            Grid* currentGrid = getGrid();
+            if (currentGrid) {
+                RenderTheField(window, *currentGrid);
+            }
+
+            textManager.DrawTexts(window);
+            window.display();
+        }
+    }
+
 
 private:
     void RenderTheField(sf::RenderWindow& window, const Grid& grid) {
