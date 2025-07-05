@@ -10,6 +10,7 @@ class Grid;
 class Player {
 public:
     std::string Name;
+    bool IsYourTurn;
     int supplies;
     int money;
 

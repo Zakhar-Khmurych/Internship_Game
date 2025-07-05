@@ -95,6 +95,8 @@ public:
        drawer.Draw(gameGrid);
 
        bool isPlayerOneTurn = true;
+       player1->IsYourTurn = true;
+       player2->IsYourTurn = false;
 
        while (true) {
            std::shared_ptr<Unit> currentUnit = isPlayerOneTurn ? unit1 : unit2;
@@ -117,6 +119,8 @@ public:
            case InputKey::EndTurn: {
                invoker.executeCommand(std::make_shared<SkipTurnCommand>(currentPlayerName));
                isPlayerOneTurn = !isPlayerOneTurn;
+               player1->IsYourTurn = isPlayerOneTurn;
+               player2->IsYourTurn = !isPlayerOneTurn;
                continue;
            }
            default: continue;
@@ -134,6 +138,8 @@ public:
                invoker.executeCommand(std::make_shared<MoveCommand>(gameGrid, currentUnit, newX, newY));
                drawer.Draw(gameGrid);
                isPlayerOneTurn = !isPlayerOneTurn;
+               player1->IsYourTurn = isPlayerOneTurn;
+               player2->IsYourTurn = !isPlayerOneTurn;
            }
        }
    }
