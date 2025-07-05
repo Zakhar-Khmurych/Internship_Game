@@ -13,7 +13,7 @@ int main() {
     CommandInvoker invoker;
 
     std::atomic<bool> isRunning(true);
-    WindowRenderer renderer(1200, 800);
+    WindowRenderer renderer(1480, 920);
     InputQueue inputQueue;
 
     std::thread gameThread([&]() {

@@ -96,28 +96,45 @@ public:
 
 
 private:
-    void RenderTheField(sf::RenderWindow& window, const Grid& grid) {
-        const float cellGap = 5.0f;
+    void _RenderTheField(sf::RenderWindow& window, const Grid& grid) {
+        const float cellGap = 10.0f;
         float cellSize = static_cast<float>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
 
         for (int x = 0; x < grid.Width; ++x) {
             for (int y = 0; y < grid.Height; ++y) {
-                sf::RectangleShape cellShape(sf::Vector2f(cellSize, cellSize));
-                auto terrain = grid.GetCell(x, y).Terrain;
+                const Cell& cell = grid.GetCell(x, y);
+                auto terrain = cell.Terrain;
                 sf::Texture& terrainTexture = textureManager.getTextureForTerrain(terrain);
 
+                float currentCellSize = cellSize;
+                sf::Vector2f cellPosition(
+                    x * (cellSize + cellGap) + cellGap,
+                    y * (cellSize + cellGap) + cellGap
+                );
+
+                if (!cell.CellTakers.empty()) {
+                    std::shared_ptr<Unit> unit = cell.CellTakers.front();
+                    if (unit->GetOwner()->IsYourTurn) {
+                        currentCellSize *= 1.1f; // ЦЮ МИ ПІДСВІЧУЄМО!!!
+                        float offset = (currentCellSize - cellSize) / 2.0f;
+                        cellPosition.x -= offset;
+                        cellPosition.y -= offset;
+                    }
+                }
+
+                sf::RectangleShape cellShape(sf::Vector2f(currentCellSize, currentCellSize));
                 cellShape.setTexture(&terrainTexture);
-                cellShape.setPosition(x * (cellSize + cellGap), y * (cellSize + cellGap));
+                cellShape.setPosition(cellPosition);
                 window.draw(cellShape);
 
-                const Cell& cell = grid.GetCell(x, y);
+
                 if (!cell.CellTakers.empty()) {
                     std::shared_ptr<Unit> unit = cell.CellTakers.front();
 
                     sf::CircleShape unitShape(cellSize * 0.4f); // коло меншого розміру
                     unitShape.setOrigin(unitShape.getRadius(), unitShape.getRadius());
-                    unitShape.setPosition(x * (cellSize + cellGap) + cellSize / 2,
-                        y * (cellSize + cellGap) + cellSize / 2);
+                    unitShape.setPosition(x * (cellSize + cellGap) + cellGap + cellSize / 2,
+                        y * (cellSize + cellGap) + cellGap + cellSize / 2);
 
                     // Текстура юніта
                     sf::Texture& unitTexture = textureManager.getTexture("unit");
@@ -128,5 +145,69 @@ private:
             }
         }
     }
+
+    void RenderTheField(sf::RenderWindow& window, const Grid& grid) {
+        const float cellGap = 10.0f;
+        float cellSize = static_cast<float>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
+
+        for (int x = 0; x < grid.Width; ++x) {
+            for (int y = 0; y < grid.Height; ++y) {
+                const Cell& cell = grid.GetCell(x, y);
+                auto terrain = cell.Terrain;
+                sf::Texture& terrainTexture = textureManager.getTextureForTerrain(terrain);
+
+                float currentCellSize = cellSize;
+                sf::Vector2f cellPosition(
+                    x * (cellSize + cellGap) + cellGap,
+                    y * (cellSize + cellGap) + cellGap
+                );
+
+                bool drawHighlight = false;
+
+                if (!cell.CellTakers.empty()) {
+                    std::shared_ptr<Unit> unit = cell.CellTakers.front();
+                    if (unit->GetOwner()->IsYourTurn) {
+                        drawHighlight = true;
+
+                        // Збільшуємо саму клітинку
+                        currentCellSize *= 1.1f;
+                        float offset = (currentCellSize - cellSize) / 2.0f;
+                        cellPosition.x -= offset;
+                        cellPosition.y -= offset;
+                    }
+                }
+
+                if (drawHighlight) {
+                    float highlightSize = currentCellSize + 8.0f;
+                    float offset = (highlightSize - currentCellSize) / 2.0f;
+                    sf::RectangleShape highlight(sf::Vector2f(highlightSize, highlightSize));
+                    highlight.setFillColor(sf::Color::White);
+                    highlight.setPosition(cellPosition.x - offset, cellPosition.y - offset);
+                    window.draw(highlight);
+                }
+
+                sf::RectangleShape cellShape(sf::Vector2f(currentCellSize, currentCellSize));
+                cellShape.setTexture(&terrainTexture);
+                cellShape.setPosition(cellPosition);
+                window.draw(cellShape);
+
+                if (!cell.CellTakers.empty()) {
+                    std::shared_ptr<Unit> unit = cell.CellTakers.front();
+
+                    sf::CircleShape unitShape(cellSize * 0.4f);
+                    unitShape.setOrigin(unitShape.getRadius(), unitShape.getRadius());
+                    unitShape.setPosition(
+                        x * (cellSize + cellGap) + cellGap + cellSize / 2,
+                        y * (cellSize + cellGap) + cellGap + cellSize / 2
+                    );
+
+                    sf::Texture& unitTexture = textureManager.getTexture("unit");
+                    unitShape.setTexture(&unitTexture);
+                    window.draw(unitShape);
+                }
+            }
+        }
+    }
+
 
 };
