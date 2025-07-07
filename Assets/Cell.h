@@ -44,21 +44,31 @@ public:
             if (owner->money > 0) {
                 const std::vector<int>& money_attrition = terrain->GetMoneyAttrition();
                 int money_cost = diceRoller.RollMultiple(money_attrition[0], money_attrition[1]);
-                owner->money -= money_cost;
+
+                if (money_cost > 0) {
+                    owner->money -= money_cost;
+                    std::cout << owner->Name << "'s unit used " << money_cost << " money. "
+                        << "Remaining: " << owner->money << ".\n";
+                }
             }
             else if (owner->supplies > 0) {
                 const std::vector<int>& supply_attrition = terrain->GetMoneyAttrition();
                 int supply_cost = diceRoller.RollMultiple(supply_attrition[0], supply_attrition[1]);
-                owner->supplies -= supply_cost;
 
+                if (supply_cost > 0) {
+                    owner->supplies -= supply_cost;
+                    std::cout << owner->Name << "'s unit used " << supply_cost << " supplies. "
+                        << "Remaining: " << owner->supplies << ".\n";
+                }
             }
             else {
                 std::cout << owner->Name << "'s unit has run out of resources and is disbanded.\n";
                 RemoveUnit(unit);
             }
-
         }
     }
+
+
 
     void HandleUnitsOnCell() {
         if (CellTakers.size() == 2) {
