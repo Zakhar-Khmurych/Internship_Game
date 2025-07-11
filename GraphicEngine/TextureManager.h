@@ -63,7 +63,9 @@ public:
             {"desert", "textures/desert.png"},
             {"mountain", "textures/mountain.png"},
             {"impassable", "textures/impassable.png"},
-            {"unit", "textures/unit.png"}
+            {"unit", "textures/unit.png"},
+            {"supplies", "textures/supplies.png"},
+            {"money", "textures/money.png"}
         };
 
         for (const auto& [name, path] : texturePaths) {

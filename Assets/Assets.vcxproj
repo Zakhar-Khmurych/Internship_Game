@@ -163,6 +163,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainTypes.h" />
+    <ClInclude Include="TextsCollection.h" />
     <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +182,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainTypes.cpp" />
+    <ClCompile Include="TextsCollection.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,6 +6,7 @@
 #include "../Assets/Grid.h"
 #include <functional>
 #include "InputKey.h"
+#include "../Assets/Grid.h"
 
 
 class WindowRenderer {
@@ -88,6 +89,9 @@ public:
             if (currentGrid) {
                 RenderTheField(window, *currentGrid);
             }
+
+           
+            
 
             textManager.DrawTexts(window);
             window.display();
@@ -208,6 +212,5 @@ private:
             }
         }
     }
-
 
 };

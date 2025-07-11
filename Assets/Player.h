@@ -15,8 +15,12 @@ public:
     int money;
 
     Player(const std::string& name) : Name(name) {
-        supplies = 50;
-        money = 50;
+        supplies = 100;
+        money = 100;
     }
+
+
+    int GetSupplies() const { return supplies; }
+    int GetMoney() const { return money; }
 
 };
