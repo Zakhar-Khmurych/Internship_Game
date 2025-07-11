@@ -71,6 +71,9 @@ public:
             std::shared_ptr<Player> currentPlayer = isPlayerOneTurn ? player1 : player2;
             std::string currentPlayerName = currentPlayer->Name;
 
+           
+
+
             if (!HasUnitsOnGrid(currentPlayer)) {
                 std::cout << currentPlayerName << " has no units left on the grid. Skipping turn.\n";
                 invoker.executeCommand(std::make_shared<SkipTurnCommand>(currentPlayerName));
@@ -183,6 +186,13 @@ public:
        }
    }
 
+   std::shared_ptr<Player> GetPlayer1() const {
+       return player1;
+   }
+
+   std::shared_ptr<Player> GetPlayer2() const {
+       return player2;
+   }
 
 
 
