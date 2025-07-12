@@ -59,8 +59,8 @@ public:
         textureManager.initializeInvalidTexture();
         textureManager.initializeAll();
 
-        textManager.AddText("Hello, SFML!", 24, sf::Color::White, sf::Vector2f(900, 100));
-        textManager.AddText("Looking for actions...", 24, sf::Color::White, sf::Vector2f(900, 150));
+        //textManager.AddText("Hello, SFML!", 24, sf::Color::White, sf::Vector2f(900, 100));
+        //textManager.AddText("Looking for actions...", 24, sf::Color::White, sf::Vector2f(900, 150));
 
         while (window.isOpen() && isRunning) {
             sf::Event event;
@@ -221,12 +221,11 @@ private:
                 if (!cell.CellTakers.empty()) {
                     std::shared_ptr<Unit> unit = cell.CellTakers.front();
 
-                    // Визначаємо радіус юніта на основі його переваги
-                    float baseRadius = 5.0f;
-                    float radiusStep = 5.0f;
+                    float baseRadius = 10.0f;
+                    float radiusStep = 2.0f;
                     int advantage = unit->GetCurrentAdvantage();
 
-                    float maxRadius = cellSize / 2.5f;  // Обмежуємо, щоби не вилазив з клітинки
+                    float maxRadius = cellSize / 1.6f;
                     float unitRadius = std::clamp(baseRadius + advantage * radiusStep, 2.0f, maxRadius);
 
                     sf::CircleShape unitShape(unitRadius);
@@ -240,8 +239,29 @@ private:
                     unitShape.setTexture(&unitTexture);
                     window.draw(unitShape);
 
-                    // Для дебагу (опціонально)
-                    // std::cout << "Unit at (" << x << ", " << y << ") has advantage " << advantage << " => radius: " << unitRadius << "\n";
+                    if (drawHighlight) {
+                        int maxAdvantage = cell.Terrain->GetMaxAdvantage();
+                        float squareSize = 16.0f;
+                        float spacing = 2.0f;
+
+                        float totalWidth = maxAdvantage * squareSize + (maxAdvantage - 1) * spacing;
+                        float startX = window.getSize().x - 50.0f - totalWidth;  // Починаємо лівіше на ширину всіх квадратиків
+
+                        float yPos = (window.getSize().y - squareSize) / 2.0f; // По вертикалі вирівнюємо по клітинці
+
+                        for (int i = 0; i < maxAdvantage; ++i) {
+                            sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
+                            square.setFillColor(sf::Color(100, 100, 100));  // сірий
+
+                            square.setPosition(
+                                startX + i * (squareSize + spacing),  // Рухаємось зліва направо
+                                yPos
+                            );
+
+                            window.draw(square);
+                        }
+                    }
+
                 }
             }
         }
