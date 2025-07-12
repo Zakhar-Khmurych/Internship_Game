@@ -28,18 +28,21 @@ public:
     void Initiate() {
         GridGenerator generator;
         generator.GenerateTerrain(gameGrid);
+        
 
         player1 = std::make_shared<Player>("1player");
         player2 = std::make_shared<Player>("2player");
 
-        unit1 = std::make_shared<Unit>(3, player1.get());
-        unit2 = std::make_shared<Unit>(3, player2.get());
+        unit1 = std::make_shared<Unit>(4, player1.get());
+        unit2 = std::make_shared<Unit>(4, player2.get());
 
         unit1->SetCoordinates(2, 7);
         unit2->SetCoordinates(7, 2);
 
         gameGrid.Cells[2][7].AddUnit(unit1);
         gameGrid.Cells[7][2].AddUnit(unit2);
+
+        gameGrid.UpdateCachedPlayers();
     }
 
 
@@ -101,6 +104,7 @@ public:
             case InputKey::Right: dx = 1;  isMove = true; break;
             case InputKey::EndTurn: {
                 invoker.executeCommand(std::make_shared<SkipTurnCommand>(currentPlayerName));
+                //отут 
                 isPlayerOneTurn = !isPlayerOneTurn;
                 player1->IsYourTurn = isPlayerOneTurn;
                 player2->IsYourTurn = !isPlayerOneTurn;
