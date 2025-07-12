@@ -77,7 +77,7 @@ public:
         // Виводимо current advantage з терену цільової клітинки
         int currentAdvantage = Cells[destX][destY].Terrain->GetMaxAdvantage();  // Технічно, це може бути поточний максимум переваги для терену
         std::cout << "Unit moved to (" << destX << ", " << destY << "). "
-            << "Current advantage on this terrain: " << currentAdvantage << std::endl;
+            << "Current advantage on this terrain: " << currentAdvantage << ". Own advantage: " << unit->GetCurrentAdvantage() << std::endl;
     }
 
     void EngageTheCombat(std::shared_ptr<Unit> unit1, std::shared_ptr<Unit> unit2) {
@@ -97,7 +97,7 @@ public:
         int maxAdvantage1 = std::min(terrain1->GetMaxAdvantage(), terrain1->GetMaxAdvantage()); // Використовуємо перевагу терену
         int maxAdvantage2 = std::min(terrain2->GetMaxAdvantage(), terrain2->GetMaxAdvantage());
 
-        // Кидаємо кубики для кожного юніта
+        // Кидаємо кубики для кожного юні+а
         int roll1 = diceRoller.RollMultiple(maxAdvantage1, 6);  // Кількість кубиків та їх максимальний розмір
         int roll2 = diceRoller.RollMultiple(maxAdvantage2, 6);
 
@@ -121,10 +121,37 @@ public:
         }
     }
 
+    
+    std::vector<std::shared_ptr<Unit>> GetUnitsAt(int x, int y) {
+        if (IsValidPosition(x, y)) {
+            return Cells[x][y].CellTakers;
+        }
+        return {};  // Повертаємо порожній вектор, якщо клітинка недійсна
+    }
+
+    std::set<Player*> cachedPlayers;
+    void UpdateCachedPlayers() {
+        cachedPlayers.clear();
+        for (int x = 0; x < Width; ++x) {
+            for (int y = 0; y < Height; ++y) {
+                const auto& cell = Cells[x][y];
+                for (const auto& unit : cell.CellTakers) {
+                    cachedPlayers.insert(unit->GetOwner());
+                }
+            }
+        }
+    }
+    const std::set<Player*>& GetCachedPlayers() const {
+        return cachedPlayers;
+    }
+
+
 
 
     private:
         TextsCollection textCollection;
 
 };
+
+
 

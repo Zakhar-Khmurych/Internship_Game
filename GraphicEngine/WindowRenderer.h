@@ -88,10 +88,18 @@ public:
             Grid* currentGrid = getGrid();
             if (currentGrid) {
                 RenderTheField(window, *currentGrid);
+                RenderPlayerResources(window, *currentGrid);
             }
 
-           
-            
+           /*
+            const auto& players = currentGrid->GetCachedPlayers();
+            std::cout << "Players on the grid:\n";
+            for (const auto* player : players) {
+                if (player) {
+                    std::cout << " - " << player->Name << " | Supplies: " << player->supplies << ", Money: " << player->money << "\n";
+                }
+            }
+            */
 
             textManager.DrawTexts(window);
             window.display();
@@ -212,5 +220,54 @@ private:
             }
         }
     }
+
+    void RenderPlayerResources(sf::RenderWindow& window, const Grid& grid) {
+        const auto& players = grid.GetCachedPlayers();
+
+        int index = 0;
+        for (const Player* player : players) {
+            if (!player) continue;
+
+            float baseY = 50.0f + index * 600.0f;
+            float rightMargin = 50.0f;
+            float iconSize = 100.0f;
+
+            // === SUPPLIES ===
+            int maxSupplies = 100;
+            float suppliesOpacity = std::clamp(static_cast<float>(player->supplies) / maxSupplies, 0.0f, 1.0f);
+            sf::Uint8 suppliesAlpha = static_cast<sf::Uint8>(suppliesOpacity * 255);
+
+            sf::RectangleShape suppliesBox(sf::Vector2f(iconSize, iconSize));
+            suppliesBox.setPosition(window.getSize().x - rightMargin - iconSize, baseY);
+            suppliesBox.setTexture(&textureManager.getTexture("supplies"));
+
+            sf::Color suppliesColor = sf::Color::White;
+            suppliesColor.a = suppliesAlpha;
+            suppliesBox.setFillColor(suppliesColor);
+
+            window.draw(suppliesBox);
+
+            // === MONEY ===
+            int maxMoney = 100;
+            float moneyOpacity = std::clamp(static_cast<float>(player->money) / maxMoney, 0.0f, 1.0f);
+            sf::Uint8 moneyAlpha = static_cast<sf::Uint8>(moneyOpacity * 255);
+
+            sf::RectangleShape moneyBox(sf::Vector2f(iconSize, iconSize));
+            moneyBox.setPosition(window.getSize().x - rightMargin - iconSize * 2 - 10.0f, baseY);
+            moneyBox.setTexture(&textureManager.getTexture("money"));
+
+            sf::Color moneyColor = sf::Color::White;
+            moneyColor.a = moneyAlpha;
+            moneyBox.setFillColor(moneyColor);
+
+            window.draw(moneyBox);
+
+            ++index;
+        }
+    }
+
+
+
+
 
 };
