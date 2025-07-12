@@ -103,11 +103,23 @@ public:
             case InputKey::Left:  dx = -1; isMove = true; break;
             case InputKey::Right: dx = 1;  isMove = true; break;
             case InputKey::EndTurn: {
+                std::shared_ptr<Player> currentPlayer = isPlayerOneTurn ? player1 : player2;
+                std::string currentPlayerName = currentPlayer->Name;
+
                 invoker.executeCommand(std::make_shared<SkipTurnCommand>(currentPlayerName));
-                //отут 
+
+                auto playerUnits = gameGrid.GetUnitsForPlayer(currentPlayer.get());
+                for (const auto& unit : playerUnits) {
+                    unit->ChangeCurrentAdvantage(1);
+                    int x = unit->GetCurrentX();
+                    int y = unit->GetCurrentY();
+                    gameGrid.Cells[x][y].UseSupplies();
+                }
+
                 isPlayerOneTurn = !isPlayerOneTurn;
                 player1->IsYourTurn = isPlayerOneTurn;
                 player2->IsYourTurn = !isPlayerOneTurn;
+
                 drawer.Draw(gameGrid);
                 continue;
             }
@@ -134,61 +146,6 @@ public:
 
         }
     }
-
-
-   void _Run(CommandInvoker& invoker, InputQueue& inputQueue) {
-       ConsoleGameStateDrawer drawer;
-       drawer.Draw(gameGrid);
-
-       bool isPlayerOneTurn = true;
-       player1->IsYourTurn = true;
-       player2->IsYourTurn = false;
-
-       while (true) {
-           std::shared_ptr<Unit> currentUnit = isPlayerOneTurn ? unit1 : unit2;
-           std::string currentPlayerName = isPlayerOneTurn ? player1->Name : player2->Name;
-
-           auto key = inputQueue.Pop();
-           if (!key.has_value()) {
-               std::this_thread::sleep_for(std::chrono::milliseconds(10));
-               continue;
-           }
-
-           int dx = 0, dy = 0;
-           bool isMove = false;
-
-           switch (key.value()) {
-           case InputKey::Up: dy = -1; isMove = true; break;
-           case InputKey::Down: dy = 1; isMove = true; break;
-           case InputKey::Left: dx = -1; isMove = true; break;
-           case InputKey::Right: dx = 1; isMove = true; break;
-           case InputKey::EndTurn: {
-               invoker.executeCommand(std::make_shared<SkipTurnCommand>(currentPlayerName));
-               isPlayerOneTurn = !isPlayerOneTurn;
-               player1->IsYourTurn = isPlayerOneTurn;
-               player2->IsYourTurn = !isPlayerOneTurn;
-               continue;
-           }
-           default: continue;
-           }
-
-           if (isMove) {
-               int newX = currentUnit->GetCurrentX() + dx;
-               int newY = currentUnit->GetCurrentY() + dy;
-
-               if (!gameGrid.IsValidPosition(newX, newY)) {
-                   std::cout << "Invalid move.\n";
-                   continue;
-               }
-
-               invoker.executeCommand(std::make_shared<MoveCommand>(gameGrid, currentUnit, newX, newY));
-               drawer.Draw(gameGrid);
-               isPlayerOneTurn = !isPlayerOneTurn;
-               player1->IsYourTurn = isPlayerOneTurn;
-               player2->IsYourTurn = !isPlayerOneTurn;
-           }
-       }
-   }
 
    std::shared_ptr<Player> GetPlayer1() const {
        return player1;

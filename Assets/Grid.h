@@ -27,7 +27,7 @@ public:
     bool IsValidPosition(int x, int y) const {
         return x >= 0 && x < Width&& y >= 0 && y < Height;
     }
-    void MoveUnit(int startX, int startY, int destX, int destY, std::shared_ptr<Unit> unit) {
+    void _MoveUnit(int startX, int startY, int destX, int destY, std::shared_ptr<Unit> unit) {
         if (!unit) {
             std::cerr << "Error: No unit provided to move." << std::endl;
             return;
@@ -79,6 +79,51 @@ public:
         std::cout << "Unit moved to (" << destX << ", " << destY << "). "
             << "Current advantage on this terrain: " << currentAdvantage << ". Own advantage: " << unit->GetCurrentAdvantage() << std::endl;
     }
+
+    void MoveUnit(int startX, int startY, int destX, int destY, std::shared_ptr<Unit> unit) {
+        if (!unit) return;
+
+        if (!IsValidPosition(destX, destY)) return;
+
+        Cell& source = Cells[startX][startY];
+        Cell& dest = Cells[destX][destY];
+
+        if (std::find(source.CellTakers.begin(), source.CellTakers.end(), unit) == source.CellTakers.end()) {
+            std::cerr << "Unit not in start cell.\n";
+            return;
+        }
+
+        if (dest.Terrain->IsImpassable()) {
+            std::cerr << "Impassable terrain.\n";
+            return;
+        }
+
+        if (!dest.IsEmpty()) {
+            auto other = dest.CellTakers[0];
+            if (other->GetOwner() != unit->GetOwner()) {
+                std::cout << "Combat begins!\n";
+                EngageTheCombat(unit, other);
+
+                // Перевіряємо: чи юніт вижив?
+                if (std::find(source.CellTakers.begin(), source.CellTakers.end(), unit) == source.CellTakers.end()) {
+                    std::cout << "Your unit was destroyed in combat and cannot move.\n";
+                    return;
+                }
+            }
+            else {
+                std::cerr << "Cell occupied by friendly unit.\n";
+                return;
+            }
+        }
+
+        // Переміщення відбувається лише якщо юніт досі в початковій клітинці
+        source.RemoveUnit(unit);
+        dest.AddUnit(unit);
+        unit->SetCoordinates(destX, destY);
+
+        std::cout << "Unit moved to (" << destX << ", " << destY << ").\n";
+    }
+
 
     void EngageTheCombat(std::shared_ptr<Unit> unit1, std::shared_ptr<Unit> unit2) {
         DiceRoller diceRoller;
@@ -143,6 +188,23 @@ public:
     }
     const std::set<Player*>& GetCachedPlayers() const {
         return cachedPlayers;
+    }
+
+    std::vector<std::shared_ptr<Unit>> GetUnitsForPlayer(Player* player) const {
+        std::vector<std::shared_ptr<Unit>> result;
+
+        for (int x = 0; x < Width; ++x) {
+            for (int y = 0; y < Height; ++y) {
+                const Cell& cell = Cells[x][y];
+                for (const auto& unit : cell.CellTakers) {
+                    if (unit && unit->GetOwner() == player) {
+                        result.push_back(unit);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
 
